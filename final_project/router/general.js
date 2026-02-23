@@ -221,4 +221,44 @@ public_users.get('/review/:isbn',function (req, res) {
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
+public_users.put("/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const { review } = req.body;
+
+  if (!books[isbn]) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  if (!review) {
+    return res.status(400).json({ message: "Review text is required" });
+  }
+
+  // Add or update review
+  books[isbn].reviews = review;
+
+  return res.status(200).json({
+    message: `Review for ISBN ${isbn} added/updated successfully`,
+    reviews: books[isbn].reviews
+  });
+});
+
+public_users.delete("/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+
+  if (!books[isbn]) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  if (!books[isbn].reviews) {
+    return res.status(404).json({ message: "No reviews found for this book" });
+  }
+
+  // delete review
+  books[isbn].reviews = {};
+
+  return res.status(200).json({
+    message: `Review for ISBN ${isbn} deleted`
+  });
+});
+
 module.exports.general = public_users;
